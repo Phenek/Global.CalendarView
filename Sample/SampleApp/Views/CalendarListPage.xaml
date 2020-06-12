@@ -18,14 +18,27 @@
     </ContentPage.Resources>
 
 <calendar:CalendarList x:Name="_calendarList" BackgroundColor="White" MarkedDates="{Binding MarkedDates, Mode=OneWay}">
+    <calendar:CalendarList.SkeletonTemplate>
+            <ControlTemplate>
+                <Label Text="{Binding ., Mode = OneWay, StringFormat='{}{0:MMMM yyyy}'}"
+                       HeightRequest="428"
+                        BackgroundColor="White"
+                        FontAttributes="Bold"
+                        FontSize="Title"
+                        TextColor="DarkRed"
+                        VerticalTextAlignment="Center"
+                        HorizontalTextAlignment="Center"
+                        HorizontalOptions="FillAndExpand"/>
+            </ControlTemplate>
+    </calendar:CalendarList.SkeletonTemplate>
         <calendar:CalendarList.MonthTemplate>
             <ControlTemplate>
                <StackLayout x:Name="_stack" Grid.Row="1">
                 <Label Text="{Binding ., Mode = OneWay, StringFormat='{}{0:MMMM yyyy}'}"
                         BackgroundColor="White"
                         FontAttributes="Bold"
-                        FontSize="Medium"
-                        TextColor="Navy"
+                        FontSize="Title"
+                        TextColor="DarkRed"
                         VerticalTextAlignment="Center"
                         HorizontalTextAlignment="Center"
                         HorizontalOptions="FillAndExpand"
@@ -60,50 +73,6 @@
                             <views:DayCell />
                         </ControlTemplate>
                     </calendar:Month.DayTemplate>
-
-                    <calendar:Month.SkeletonView>
-                        <Grid BackgroundColor="White">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40" />
-                                <RowDefinition Height="40" />
-                                <RowDefinition Height="40" />
-                                <RowDefinition Height="40" />
-                                <RowDefinition Height="40" />
-                            </Grid.RowDefinitions>
-
-                            <controls:SkeletonView Grid.Row="0" Grid.Column="4" />
-                            <controls:SkeletonView Grid.Row="0" Grid.Column="5" />
-                            <controls:SkeletonView Grid.Row="0" Grid.Column="6" />
-
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="0" />
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="1" />
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="2" />
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="3" />
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="4" />
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="5" />
-                            <controls:SkeletonView Grid.Row="1" Grid.Column="6" />
-
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="0" />
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="1" />
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="2" />
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="3" />
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="4" />
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="5" />
-                            <controls:SkeletonView Grid.Row="2" Grid.Column="6" />
-
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="0" />
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="1" />
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="2" />
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="3" />
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="4" />
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="5" />
-                            <controls:SkeletonView Grid.Row="3" Grid.Column="6" />
-
-                            <controls:SkeletonView Grid.Row="4" Grid.Column="0" />
-                            <controls:SkeletonView Grid.Row="4" Grid.Column="1" />
-                            <controls:SkeletonView Grid.Row="4" Grid.Column="2" />
-                        </Grid>
-                    </calendar:Month.SkeletonView>
                 </calendar:Month>
 
             </StackLayout>

@@ -59,15 +59,8 @@ namespace Global.CalendarView.Controls
         /// <summary>
         ///     The first day of week property.
         /// </summary>
-        public static readonly BindableProperty SkeletonDisplayModeProperty =
-            BindableProperty.Create(nameof(SkeletonDisplayMode), typeof(SkeletonDisplayMode), typeof(Month), default);
-
-        /// <summary>
-        ///     The scrolling property.
-        /// </summary>
-        public static readonly BindableProperty IsScrollingProperty =
-            BindableProperty.Create(nameof(IsScrolling), typeof(bool), typeof(Month), false,
-                propertyChanged: IsScrollingChanged);
+        public static readonly BindableProperty CalendarModeProperty =
+            BindableProperty.Create(nameof(CalendarMode), typeof(CalendarMode), typeof(Month), default);
 
         private Grid _grid;
 
@@ -167,20 +160,10 @@ namespace Global.CalendarView.Controls
         ///     Gets or sets the current date.
         /// </summary>
         /// <value>The current date attributes.</value>
-        public SkeletonDisplayMode SkeletonDisplayMode
+        public CalendarMode CalendarMode
         {
-            get => (SkeletonDisplayMode)GetValue(SkeletonDisplayModeProperty);
-            set => SetValue(SkeletonDisplayModeProperty, value);
-        }
-
-        /// <summary>
-        ///     Gets or sets the month is scrolling.
-        /// </summary>
-        /// <value>The current date attributes.</value>
-        public bool IsScrolling
-        {
-            get => (bool)GetValue(IsScrollingProperty);
-            set => SetValue(IsScrollingProperty, value);
+            get => (CalendarMode)GetValue(CalendarModeProperty);
+            set => SetValue(CalendarModeProperty, value);
         }
 
         /// <summary>
@@ -246,20 +229,19 @@ namespace Global.CalendarView.Controls
                             }
                     }
 
-                    IsGenerating = false;
                     Device.InvokeOnMainThreadAsync(() =>
                     {
+                        Content = _grid;
                         IsGenerating = false;
                         LoadDays();
-                        Content = _grid;
 
-                        //SkeletonView.IsVisible = false;
-                        SkeletonView.Opacity = 0.0;
-                        Grid.SetColumn(SkeletonView, 0);
-                        Grid.SetRow(SkeletonView, 0);
-                        Grid.SetColumnSpan(SkeletonView, 7);
-                        Grid.SetRowSpan(SkeletonView, 8);
-                        _grid.Children.Add(SkeletonView);
+                        ////SkeletonView.IsVisible = false;
+                        //SkeletonView.Opacity = 0.0;
+                        //Grid.SetColumn(SkeletonView, 0);
+                        //Grid.SetRow(SkeletonView, 0);
+                        //Grid.SetColumnSpan(SkeletonView, 7);
+                        //Grid.SetRowSpan(SkeletonView, 8);
+                        //_grid.Children.Add(SkeletonView);
                     });
                 }
                 catch (Exception ex)
@@ -269,11 +251,13 @@ namespace Global.CalendarView.Controls
             });
         }
 
-        public async void LoadDays()
+        public bool LoadDays()
         {
-            if (IsGenerating || IsLoading || _grid == null) return;
+            if (IsGenerating || IsLoading || _grid == null) return false;
 
-            if (SkeletonDisplayMode == SkeletonDisplayMode.WhenMonthGenerated)
+            IsLoading = true;
+
+            if (CalendarMode == CalendarMode.Tab)
             {
                 _grid.Opacity = 0.0;
                 var a = new Animation
@@ -308,14 +292,8 @@ namespace Global.CalendarView.Controls
                 }
             }
 
-            if (SkeletonDisplayMode == SkeletonDisplayMode.WhenDaysLoad)
-            {
-                var a = new Animation
-                {
-                    {0.2, 1, new Animation(f => SkeletonView.Opacity = f, 1.0, 0.0, Easing.Linear)}
-                };
-                a.Commit(this, "MonthAnimation", 16, 100);//, finished: (d, b) => SkeletonView.IsVisible = false);
-            }
+            IsLoading = false;
+            return true;
         }
 
         private List<DateTime> GetDates()
@@ -339,12 +317,7 @@ namespace Global.CalendarView.Controls
         {
             if (bindable is Month month)
             {
-                if (month.SkeletonDisplayMode == SkeletonDisplayMode.WhenDaysLoad)
-                {
-                    if (month.SkeletonView != null)
-                        month.SkeletonView.Opacity = 1.0;
-                }
-                else
+                if (month.CalendarMode != CalendarMode.List)
                     month.LoadDays();
             }
         }
@@ -402,17 +375,6 @@ namespace Global.CalendarView.Controls
             {
                 newDic.CollectionChanged += (sender, e) => month.MarkedDatesCollectionChanged(e);
                 month.UpdateAllMarkers();
-            }
-        }
-
-        private static void IsScrollingChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            if (!(bindable is Month month)) return;
-            if ((bool)oldValue == true && (bool)newValue == false && !month.IsGenerating && !month.IsLoading)
-            {
-                //var begin = month.CurrentDate.GetFirstDayOfMonth().GetFirstDayOfWeek(month.FirstDay);
-                //if (month.DaysViews.Any() && begin != month.DaysViews[0].Date)
-                //    month.LoadDays();
             }
         }
 

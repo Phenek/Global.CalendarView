@@ -10,6 +10,12 @@ namespace Global.CalendarView.Controls
     public class CalendarList : ContentView
     {
         /// <summary>
+        ///     The Skeleton content property.
+        /// </summary>
+        public static readonly BindableProperty SkeletonTemplateProperty = BindableProperty.Create(nameof(SkeletonTemplate),
+            typeof(ControlTemplate), typeof(CalendarList), null);
+
+        /// <summary>
         ///     The Month template property.
         /// </summary>
         public static readonly BindableProperty MonthTemplateProperty =
@@ -73,20 +79,19 @@ namespace Global.CalendarView.Controls
             {
                 _monthCellList.ForEach((cell) =>
                 {
-                    if (cell.VisibleIndex >= e.FirstVisibleItemIndex && cell.VisibleIndex <= e.LastVisibleItemIndex)
+                    if (cell.VisibleIndex > e.FirstVisibleItemIndex && cell.VisibleIndex < e.LastVisibleItemIndex
+                    || cell.VisibleIndex == e.FirstVisibleItemIndex || cell.VisibleIndex == e.LastVisibleItemIndex)
                     {
-                        var begin = cell.MonthControl.CurrentDate.GetFirstDayOfMonth().GetFirstDayOfWeek(cell.MonthControl.FirstDay);
-                        if (cell.MonthControl.DaysViews.Any() && begin != cell.MonthControl.DaysViews[0].Date)
-                            cell.MonthControl.LoadDays();
+                        cell.LoadCell();
                     }
-                    cell.MonthControl.IsScrolling = false;
+                    cell.IsScrolling = false;
                 });
             }
             else
             {
                 _monthCellList.ForEach((cell) =>
                 {
-                    cell.MonthControl.IsScrolling = true;
+                    cell.IsScrolling = true;
                 });
             }
             Debug.WriteLine("HorizontalDelta: " + e.HorizontalDelta);
@@ -99,7 +104,17 @@ namespace Global.CalendarView.Controls
         }
 
         /// <summary>
-        ///     Gets or sets the day template.
+        ///     Gets or sets the skeleton template.
+        /// </summary>
+        /// <value>The day template attributes.</value>
+        public ControlTemplate SkeletonTemplate
+        {
+            get => (ControlTemplate)GetValue(SkeletonTemplateProperty);
+            set => SetValue(SkeletonTemplateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the month template.
         /// </summary>
         /// <value>The day template attributes.</value>
         public ControlTemplate MonthTemplate

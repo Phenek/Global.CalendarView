@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Global.CalendarView.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
@@ -11,12 +13,48 @@ namespace Global.CalendarView.Controls
     public class MonthCell : ContentView, INotifyPropertyChanged
     {
         public int VisibleIndex;
-        public Month MonthControl;
+        private Grid _grid;
+        private View _skeleton;
+        private View _monthView;
+        private Month _monthControl;
         private CalendarList _calendarList;
+
+        /// <summary>
+        ///     The scrolling property.
+        /// </summary>
+        public static readonly BindableProperty IsScrollingProperty =
+            BindableProperty.Create(nameof(IsScrolling), typeof(bool), typeof(Month), false,
+                propertyChanged: IsScrollingChanged);
 
         public MonthCell()
         {
-            
+            Content = _grid = new Grid()
+            {
+                VerticalOptions = LayoutOptions.Center,
+                HeightRequest = 428,
+                MinimumHeightRequest = 428,
+            };
+        }
+
+        /// <summary>
+        ///     Gets or sets the month is scrolling.
+        /// </summary>
+        /// <value>The current date attributes.</value>
+        public bool IsScrolling
+        {
+            get => (bool)GetValue(IsScrollingProperty);
+            set => SetValue(IsScrollingProperty, value);
+        }
+
+        private static void IsScrollingChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (!(bindable is Month month)) return;
+            if ((bool)oldValue == true && (bool)newValue == false && !month.IsGenerating && !month.IsLoading)
+            {
+                //var begin = month.CurrentDate.GetFirstDayOfMonth().GetFirstDayOfWeek(month.FirstDay);
+                //if (month.DaysViews.Any() && begin != month.DaysViews[0].Date)
+                //    month.LoadDays();
+            }
         }
 
         protected override void OnParentSet()
@@ -28,12 +66,33 @@ namespace Global.CalendarView.Controls
                 _calendarList = GetCalendarList(this);
                 if (_calendarList != null)
                 {
-                    Content = CreateMonthTemplatedView();
+                    _skeleton = CreateSkeletonTemplatedView();
 
-                    MonthControl = GetChildOfTypeMonth(Content);
-                    MonthControl.ClickedDay += _calendarList.PropagateClickedDate;
+                    Grid.SetColumn(_skeleton, 0);
+                    Grid.SetRow(_skeleton, 0);
+                    Grid.SetColumnSpan(_skeleton, 1);
+                    Grid.SetRowSpan(_skeleton, 1);
 
-                    BindToCalendarList(_calendarList);
+                    _grid.Children.Add(_skeleton);
+
+                    Task.Run(() =>
+                    {
+                        _monthView = CreateMonthTemplatedView();
+                        _monthControl = GetChildOfTypeMonth(_monthView);
+                        _monthControl.ClickedDay += _calendarList.PropagateClickedDate;
+                        BindToCalendarList(_calendarList);
+
+                        Grid.SetColumn(_monthView, 0);
+                        Grid.SetRow(_monthView, 0);
+                        Grid.SetColumnSpan(_monthView, 1);
+                        Grid.SetRowSpan(_monthView, 1);
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            _grid.Children.Add(_monthView);
+                            _grid.Children.Remove(_skeleton);
+                            _grid.Children.Add(_skeleton);
+                        });
+                    });
                 }
             }
         }
@@ -52,6 +111,43 @@ namespace Global.CalendarView.Controls
                 }
             }
             return null;
+        }
+
+        public View CreateSkeletonTemplatedView()
+        {
+            if (_calendarList.SkeletonTemplate != null)
+            {
+                if (_calendarList.SkeletonTemplate.CreateContent() is View skeletonView)
+                {
+                    return skeletonView;
+                }
+                else
+                {
+                    throw new InvalidOperationException("MonthTemplate must be either a MonthCell");
+                }
+            }
+            return null;
+        }
+
+        public void LoadCell()
+        {
+            if (_monthControl == null) return;
+
+            var begin = _monthControl.CurrentDate.GetFirstDayOfMonth().GetFirstDayOfWeek(_monthControl.FirstDay);
+            if (_monthControl.DaysViews.Any() && begin != _monthControl.DaysViews[0].Date)
+            {
+                _monthControl.LoadDays();
+            }
+
+            if (_skeleton.IsVisible)
+            {
+                _monthView.IsVisible = true;
+                var a = new Animation
+                {
+                    {0.2, 1, new Animation(f => _skeleton.Opacity = f, 1.0, 0.0, Easing.Linear)}
+                };
+                a.Commit(this, "MonthAnimation", 16, 50, finished: (d, b) => _skeleton.IsVisible = false);
+            }
         }
 
         public CalendarList GetCalendarList(VisualElement element)
@@ -73,29 +169,51 @@ namespace Global.CalendarView.Controls
 
         protected override void OnBindingContextChanged()
         {
-            base.OnBindingContextChanged();
+            if (_skeleton != null)
+            {
+                _skeleton.IsVisible = true;
+                _skeleton.Opacity = 1.0;
+            }
+            if (_monthView != null)
+            {
+                _monthView.IsVisible = false;
+            }
 
-            if (MonthControl != null && BindingContext is KeyValuePair<int, DateTime> kvp)
+            if (BindingContext is KeyValuePair<int, DateTime> kvp)
             {
                 VisibleIndex = kvp.Key;
-                MonthControl.CurrentDate = kvp.Value;
+                if (_monthControl != null)
+                {
+                    _monthControl.CurrentDate = kvp.Value;
+                    _monthControl.BindingContext = kvp.Value;
+                }
+                if (_monthView != null)
+                {
+                    _monthView.BindingContext = kvp.Value;
+                }
+                if (_skeleton != null)
+                {
+                    _skeleton.BindingContext = kvp.Value;
+                }
             }
+
+            base.OnBindingContextChanged();
         }
 
         private void BindToCalendarList(CalendarList parent)
         {
-            if (MonthControl != null && BindingContext is KeyValuePair<int, DateTime> kvp)
+            if (_monthControl != null && BindingContext is KeyValuePair<int, DateTime> kvp)
             {
                 VisibleIndex = kvp.Key;
-                MonthControl.CurrentDate = kvp.Value;
+                _monthControl.CurrentDate = kvp.Value;
             }
 
-            MonthControl.SkeletonDisplayMode = SkeletonDisplayMode.WhenDaysLoad;
-            MonthControl.SetBinding(Month.MinDateProperty,
+            _monthControl.CalendarMode = CalendarMode.List;
+            _monthControl.SetBinding(Month.MinDateProperty,
                 new Binding(nameof(CalendarList.MinDate)) { Source = parent, Mode = BindingMode.OneWay });
-            MonthControl.SetBinding(Month.MaxDateProperty,
+            _monthControl.SetBinding(Month.MaxDateProperty,
                 new Binding(nameof(CalendarList.MaxDate)) { Source = parent, Mode = BindingMode.OneWay });
-            MonthControl.SetBinding(Month.MarkedDatesProperty,
+            _monthControl.SetBinding(Month.MarkedDatesProperty,
                 new Binding(nameof(CalendarList.MarkedDates)) { Source = parent, Mode = BindingMode.OneWay });
         }
 

@@ -1,9 +1,9 @@
 ﻿using System;
 namespace Global.CalendarView.Models
 {
-    public enum SkeletonDisplayMode
+    public enum CalendarMode
     {
-        WhenMonthGenerated,
-        WhenDaysLoad,
+        Tab,
+        List,
     }
 }

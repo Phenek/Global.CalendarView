@@ -39,8 +39,8 @@ namespace SampleApp.ViewModels
             set
             {
                 SetProperty(ref _date, value);
-                OnPropertyChanged(nameof(FrameColor));
                 OnPropertyChanged(nameof(FrameMargin));
+                OnPropertyChanged(nameof(FrameColor));
             }
         }
     }
