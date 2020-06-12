@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Phenek</Authors>
+    <Description>Global.CalendarView provides a Xamarin.Forms essentials controls for iOS and Android apps.</Description>
+    <PackageId>Global.CalendarView</PackageId>
+    <PackageLicenseUrl>https://github.com/Phenek/Global.CalendarView/blob/master/LICENSE</PackageLicenseUrl>
+    <Owners>Vice</Owners>
+    <PackageProjectUrl>https://github.com/Phenek/Global.CalendarView/</PackageProjectUrl>
+    <PackageTags>map portable pcl android ios xamarin monoandroid monodroid xamarin.forms</PackageTags>
+    <PackageIcon>Icon-128.png</PackageIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <OutputPath>bin\Debug</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+    <OutputPath>bin\Release</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.847" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="CalendarView.cs" />
+    <Compile Remove="App.xaml.cs" />
+    <Compile Remove="Interfaces\IInfoView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Icons\Icon-128.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Cells\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+</Project>

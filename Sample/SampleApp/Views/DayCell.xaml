@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<calendar:DayCell xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:SampleApp.Views"
+             xmlns:utils="clr-namespace:SampleApp.Utils"
+             xmlns:calendar="clr-namespace:Global.CalendarView.Controls;assembly=Global.CalendarView"
+             x:Class="SampleApp.Views.DayCell"
+             BackgroundColor="White"
+             x:Name="_dayCell">
+
+            <calendar:DayCell.Resources>
+                <ResourceDictionary>
+                    <utils:InverseBooleanConverter x:Key="InverseBool" />
+                    <Thickness x:Key="Margin" Left="-5" Right="-5" Bottom="0" Top="0" />
+                </ResourceDictionary>
+            </calendar:DayCell.Resources>
+
+    <Grid IsVisible="{Binding OutOfMonth, Converter={StaticResource InverseBool}, Source={x:Reference _dayCell}}"
+          BackgroundColor="White"
+          HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsClippedToBounds="True">
+
+        <Frame x:Name="_frame" Padding="0" CornerRadius="5"
+               Margin="{Binding FrameMargin, FallbackValue={StaticResource Margin}}"
+               BackgroundColor="{Binding FrameColor, FallbackValue=Transparent}"
+               HeightRequest="40" BorderColor="Transparent" HasShadow="false" />
+
+        <Frame x:Name="_dayFrame" Margin="5" Padding="0" CornerRadius="15"
+               HeightRequest="30"
+               WidthRequest="30"
+               BackgroundColor="{Binding DayColor, FallbackValue=Transparent}"
+               BorderColor="Transparent" HasShadow="false"
+               VerticalOptions="Start" HorizontalOptions="Center">
+            <Label x:Name="_label"
+                   FontAttributes="Bold"
+                   Text="{Binding Date, StringFormat='{}{0:dd}', Source={x:Reference _dayCell}}"
+                   VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        </Frame>
+    </Grid>
+</calendar:DayCell>

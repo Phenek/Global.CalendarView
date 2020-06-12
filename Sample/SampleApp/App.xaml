@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SampleApp.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Primary">#B63029</Color>
+            <Color x:Key="PrimaryDark">#1976D2</Color>
+            <Color x:Key="Accent">#96d1ff</Color>
+            <Color x:Key="LightBackgroundColor">#F5F5F5</Color>
+            <Color x:Key="DarkBackgroundColor">#C0C0C0</Color>
+            <Color x:Key="MediumGrayTextColor">#4d4d4d</Color>
+            <Color x:Key="LightTextColor">#999999</Color>
+
+            <Color x:Key="BleuButtonBackground">#335D83</Color>
+            <Color x:Key="BleuButtonHighlightBackground">#4b85b9</Color>
+
+            <Color x:Key="TextColor">#000000</Color>
+            <Color x:Key="HightlightTextColor">#93b9d9</Color>
+            <Color x:Key="LineColor">#0B7DB3</Color>
+            <Color x:Key="HightlightLineColor">#0B7DB3</Color>
+            <Color x:Key="PlaceHolderColor">#0B7DB3</Color>
+            <Color x:Key="EntryBackgroundColor">#eba8a5</Color>
+            <Color x:Key="PrimaryColor">#B63029</Color>
+            <Color x:Key="SeparatorColor">#E6E6E6</Color>
+
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="BarTextColor" Value="White" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

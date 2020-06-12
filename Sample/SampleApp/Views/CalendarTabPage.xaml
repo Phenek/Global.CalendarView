@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:global="clr-namespace:Global.InputForms;assembly=Global.InputForms"
+             xmlns:utils="clr-namespace:SampleApp.Utils"
+             xmlns:calendar="clr-namespace:Global.CalendarView.Controls;assembly=Global.CalendarView"
+             xmlns:controls="clr-namespace:SampleApp.Controls"
+             xmlns:views="clr-namespace:SampleApp.Views"
+             x:Class="SampleApp.Views.CalendarTabPage"
+             BackgroundColor="White">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <utils:DateToUpperCaseConverter x:Key="DateToUpperCaseConverter" />
+            <utils:LeftPanelConverter x:Key="LeftPanelConverter" />
+            <utils:RightPanelConverter x:Key="RightPanelConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <StackLayout x:Name="_stack" Grid.Row="1">
+
+                <calendar:Panel HeightRequest="60" x:Name="_panel" MinDate="{Binding MinDate, Mode=OneTime}"
+                                MaxDate="{Binding MaxDate, Mode=OneTime}"
+                                CurrentDate="{Binding CurrentDate, Mode=TwoWay}">
+                    <calendar:Panel.LeftView>
+                        <Label x:Name="_leftView"
+                               Text="{Binding ., Mode = OneWay, Converter={StaticResource LeftPanelConverter}}"
+                               BackgroundColor="White"
+                               WidthRequest="60"
+                               FontSize="30"
+                               TextColor="Navy"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="FillAndExpand" />
+                    </calendar:Panel.LeftView>
+
+                    <calendar:Panel.MiddleView>
+                        <Label Text="{Binding ., Mode = OneWay, StringFormat='{}{0:MMMM yyyy}'}"
+                               BackgroundColor="White"
+                               FontAttributes="Bold"
+                               FontSize="Medium"
+                               TextColor="Navy"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="FillAndExpand"
+                               HeightRequest="60" />
+                    </calendar:Panel.MiddleView>
+
+                    <calendar:Panel.RightView>
+                        <Label x:Name="_rightView"
+                               Text="{Binding ., Mode = OneWay, Converter={StaticResource RightPanelConverter}}"
+                               BackgroundColor="White"
+                               WidthRequest="60"
+                               FontSize="30"
+                               TextColor="Navy"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="FillAndExpand" />
+                    </calendar:Panel.RightView>
+                </calendar:Panel>
+
+                <BoxView HeightRequest="2" HorizontalOptions="FillAndExpand"
+                         BackgroundColor="Gray" />
+
+                <calendar:WeekDays FirstDay="Monday">
+                    <calendar:WeekDays.WeekDayTemplate>
+                        <ControlTemplate>
+                            <ContentView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                                         HeightRequest="40" BackgroundColor="White">
+                                <Label
+                                    Text="{Binding ., Mode = OneWay, StringFormat='{}{0:ddd}', Converter={StaticResource DateToUpperCaseConverter}}"
+                                    FontSize="Default"
+                                    FontAttributes="Bold"
+                                    TextColor="Gray"
+                                    HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+                            </ContentView>
+                        </ControlTemplate>
+                    </calendar:WeekDays.WeekDayTemplate>
+                </calendar:WeekDays>
+
+                <BoxView HeightRequest="2" HorizontalOptions="FillAndExpand"
+                         BackgroundColor="Gray" />
+
+                <calendar:Month x:Name="_calendar1"
+                                MinDate="{Binding MinDate, Mode=OneWay}" MaxDate="{Binding MaxDate, Mode=OneWay}"
+                                CurrentDate="{Binding CurrentDate, Mode=TwoWay}"
+                                FirstDay="Monday" BackgroundColor="White"
+                                MarkedDates="{Binding MarkedDates, Mode=OneWay}">
+                    <calendar:Month.DayTemplate>
+                        <ControlTemplate>
+                            <views:DayCell />
+                        </ControlTemplate>
+                    </calendar:Month.DayTemplate>
+
+                    <calendar:Month.SkeletonView>
+                        <Grid BackgroundColor="White">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                            </Grid.RowDefinitions>
+
+                            <controls:SkeletonView Grid.Row="0" Grid.Column="4" />
+                            <controls:SkeletonView Grid.Row="0" Grid.Column="5" />
+                            <controls:SkeletonView Grid.Row="0" Grid.Column="6" />
+
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="0" />
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="1" />
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="2" />
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="3" />
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="4" />
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="5" />
+                            <controls:SkeletonView Grid.Row="1" Grid.Column="6" />
+
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="0" />
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="1" />
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="2" />
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="3" />
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="4" />
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="5" />
+                            <controls:SkeletonView Grid.Row="2" Grid.Column="6" />
+
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="0" />
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="1" />
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="2" />
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="3" />
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="4" />
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="5" />
+                            <controls:SkeletonView Grid.Row="3" Grid.Column="6" />
+
+                            <controls:SkeletonView Grid.Row="4" Grid.Column="0" />
+                            <controls:SkeletonView Grid.Row="4" Grid.Column="1" />
+                            <controls:SkeletonView Grid.Row="4" Grid.Column="2" />
+                        </Grid>
+                    </calendar:Month.SkeletonView>
+                </calendar:Month>
+
+            </StackLayout>
+       
+    </ContentPage.Content>
+</ContentPage>

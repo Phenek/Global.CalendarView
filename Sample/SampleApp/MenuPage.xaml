@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:global="clr-namespace:Global.InputForms;assembly=Global.InputForms"
+             xmlns:controls="clr-namespace:SampleApp.Controls"
+             NavigationPage.HasNavigationBar="false"
+             BackgroundColor="{ StaticResource PrimaryColor}"
+            
+             x:Class="SampleApp.MenuPage">
+    <ContentPage.Content>
+
+         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Image x:Name="_logo" Source="GlobalLogo"
+                   HeightRequest="128" WidthRequest="128"
+                   HorizontalOptions="Center" VerticalOptions="Center"
+                   Aspect="AspectFit"/>
+
+             <ScrollView  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+
+                <ContentView>
+                    <StackLayout x:Name="_stackLayout" Spacing="0" BackgroundColor="White">
+                        <BoxView HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource SeparatorColor}" />
+                        <controls:ButtonInputs x:Name="toCalendarTabBtn" Title="CalendarTab"/>
+                        <BoxView Margin="20,0,20,0" HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource SeparatorColor}" />
+                        <controls:ButtonInputs x:Name="toCalendarListBtn" Title="CalendarList"/>
+                        <BoxView Margin="20,0,20,0" HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource SeparatorColor}" />
+                    </StackLayout>
+                </ContentView>
+        </ScrollView>
+        </Grid>
+
+    </ContentPage.Content>
+</ContentPage>
