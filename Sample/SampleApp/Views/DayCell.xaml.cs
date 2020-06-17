@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Global.CalendarView.Controls;
 using Xamarin.Forms;
 
 namespace SampleApp.Views
@@ -17,9 +14,11 @@ namespace SampleApp.Views
 
         private void DatePropertyChanged(object sender, EventArgs e)
         {
-            _label.TextColor = Date < DateTime.Today ? Color.LightGray : Date == DateTime.Today
-                ? Color.White
-                : Color.Black;
+            _label.TextColor = Date < DateTime.Today
+                ? Color.LightGray
+                : Date == DateTime.Today
+                    ? Color.White
+                    : Color.Black;
         }
     }
 }

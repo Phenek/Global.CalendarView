@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Xamarin.Forms;
 
 namespace Global.CalendarView.Controls
@@ -13,10 +12,6 @@ namespace Global.CalendarView.Controls
             BindableProperty.Create(nameof(VisibleViews), typeof(ObservableCollection<View>), typeof(Calendar),
                 new ObservableCollection<View>());
 
-        public ObservableCollection<View> VisibleViews => (ObservableCollection<View>)GetValue(VisibleViewsProperty);
-
-        public CalendarCollection()
-        {
-        }
+        public ObservableCollection<View> VisibleViews => (ObservableCollection<View>) GetValue(VisibleViewsProperty);
     }
 }

@@ -13,15 +13,16 @@ namespace Global.CalendarView.Controls
         /// <summary>
         ///     The Skeleton content property.
         /// </summary>
-        public static readonly BindableProperty SkeletonTemplateProperty = BindableProperty.Create(nameof(SkeletonTemplate),
-            typeof(ControlTemplate), typeof(CalendarList), null);
+        public static readonly BindableProperty SkeletonTemplateProperty = BindableProperty.Create(
+            nameof(SkeletonTemplate),
+            typeof(ControlTemplate), typeof(CalendarList));
 
         /// <summary>
         ///     The Month template property.
         /// </summary>
         public static readonly BindableProperty MonthTemplateProperty =
-            BindableProperty.Create(nameof(MonthTemplate), typeof(ControlTemplate), typeof(CalendarList),
-                null); //, validateValue: ValidateDayTemplate);
+            BindableProperty.Create(nameof(MonthTemplate), typeof(ControlTemplate),
+                typeof(CalendarList)); //, validateValue: ValidateDayTemplate);
 
         /// <summary>
         ///     The current date property.
@@ -40,14 +41,16 @@ namespace Global.CalendarView.Controls
         ///     The max date property.
         /// </summary>
         public static readonly BindableProperty MaxDateProperty =
-            BindableProperty.Create(nameof(MaxDate), typeof(DateTime), typeof(CalendarList), DateTime.Today.AddYears(+2));
+            BindableProperty.Create(nameof(MaxDate), typeof(DateTime), typeof(CalendarList),
+                DateTime.Today.AddYears(+2));
 
         /// <summary>
         ///     The marked dates property.
         /// </summary>
         public static readonly BindableProperty MarkedDatesProperty =
-            BindableProperty.Create(nameof(MarkedDates), typeof(CalendarDictionary<DateTime, object>), typeof(CalendarList),
-                new CalendarDictionary<DateTime, object>());//, propertyChanged: MarkedDatesChanged);
+            BindableProperty.Create(nameof(MarkedDates), typeof(CalendarDictionary<DateTime, object>),
+                typeof(CalendarList),
+                new CalendarDictionary<DateTime, object>()); //, propertyChanged: MarkedDatesChanged);
 
         /// <summary>
         ///     The Visible views property.
@@ -63,20 +66,21 @@ namespace Global.CalendarView.Controls
             BindableProperty.Create(nameof(TemplateViewHeight), typeof(double), typeof(Calendar),
                 -1d);
 
+        private readonly CollectionView _collectionView;
+        private bool _isScrolling;
+        private readonly List<MonthCell> _monthCellList = new List<MonthCell>();
+        private readonly List<DateTime> _monthList;
+        private double _verticalDelta;
+
 
         public EventHandler<SelectedItemChangedEventArgs> ClickedDay;
-        private List<DateTime> _monthList;
-        private List<MonthCell> _monthCellList = new List<MonthCell>();
-        private CollectionView _collectionView;
-        private double _verticalDelta;
-        private bool _isScrolling;
 
         public CalendarList()
         {
             _collectionView = new CollectionView
             {
                 SelectionMode = SelectionMode.None,
-                ItemsSource = _monthList = GetRangeMonths(),
+                ItemsSource = _monthList = GetRangeMonths()
             };
             _collectionView.ItemTemplate = new DataTemplate(() =>
             {
@@ -89,6 +93,78 @@ namespace Global.CalendarView.Controls
             //VisibleViews.CollectionChanged += VisibleViews_CollectionChanged;
 
             Content = _collectionView;
+        }
+
+        /// <summary>
+        ///     Gets or sets the skeleton template.
+        /// </summary>
+        /// <value>The day template attributes.</value>
+        public ControlTemplate SkeletonTemplate
+        {
+            get => (ControlTemplate) GetValue(SkeletonTemplateProperty);
+            set => SetValue(SkeletonTemplateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the month template.
+        /// </summary>
+        /// <value>The day template attributes.</value>
+        public ControlTemplate MonthTemplate
+        {
+            get => (ControlTemplate) GetValue(MonthTemplateProperty);
+            set => SetValue(MonthTemplateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the current date.
+        /// </summary>
+        /// <value>The current date attributes.</value>
+        public DateTime CurrentDate
+        {
+            get => (DateTime) GetValue(CurrentDateProperty);
+            set => SetValue(CurrentDateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the minimum date.
+        /// </summary>
+        /// <value>The minimun date attributes.</value>
+        public DateTime MinDate
+        {
+            get => (DateTime) GetValue(MinDateProperty);
+            set => SetValue(MinDateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the maximum date.
+        /// </summary>
+        /// <value>The maximum date attributes.</value>
+        public DateTime MaxDate
+        {
+            get => (DateTime) GetValue(MaxDateProperty);
+            set => SetValue(MaxDateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets marked dates.
+        /// </summary>
+        /// <value>The marked dates attributes.</value>
+        public CalendarDictionary<DateTime, object> MarkedDates
+        {
+            get => (CalendarDictionary<DateTime, object>) GetValue(MarkedDatesProperty);
+            set => SetValue(MarkedDatesProperty, value);
+        }
+
+        public ObservableCollection<MonthCell> VisibleViews
+        {
+            get => (ObservableCollection<MonthCell>) GetValue(VisibleViewsProperty);
+            private set => SetValue(MarkedDatesProperty, value);
+        }
+
+        public double TemplateViewHeight
+        {
+            get => (double) GetValue(TemplateViewHeightProperty);
+            set => SetValue(TemplateViewHeightProperty, value);
         }
 
         //private void VisibleViews_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -106,8 +182,8 @@ namespace Global.CalendarView.Controls
             _verticalDelta = e.VerticalDelta;
 
             if (Math.Abs(e.VerticalDelta) < 10
-            || e.LastVisibleItemIndex == _monthList.Count - 1
-            || e.FirstVisibleItemIndex == 0)
+                || e.LastVisibleItemIndex == _monthList.Count - 1
+                || e.FirstVisibleItemIndex == 0)
             {
                 if (e.LastVisibleItemIndex == _monthList.Count - 1)
                     Console.WriteLine("EndOfTheList");
@@ -116,30 +192,24 @@ namespace Global.CalendarView.Controls
                 else
                     Console.WriteLine("Middle");
 
-                _monthCellList//.OrderBy(o => (e.VerticalDelta > 0) ? o.VisibleIndex :- o.VisibleIndex)
-                .ForEach((cell) =>
-                {
-                    int index = _monthList.FindIndex(a =>
+                _monthCellList //.OrderBy(o => (e.VerticalDelta > 0) ? o.VisibleIndex :- o.VisibleIndex)
+                    .ForEach(cell =>
                     {
-                        if (!(cell.BindingContext is DateTime cellDate)) return false;
-                        return a == cellDate;
+                        var index = _monthList.FindIndex(a =>
+                        {
+                            if (!(cell.BindingContext is DateTime cellDate)) return false;
+                            return a == cellDate;
+                        });
+                        if (index >= e.FirstVisibleItemIndex && index <= e.LastVisibleItemIndex)
+                            if (!cell.IsLoaded)
+                                cell.LoadCell();
                     });
-                    if (index >= e.FirstVisibleItemIndex && index <= e.LastVisibleItemIndex)
-                    {
-                        if (!cell.IsLoaded)
-                            cell.LoadCell();
-                    }
-                });
             }
 
             if (Math.Abs(e.VerticalDelta) < 10)
-            {
                 _isScrolling = false;
-            }
             else
-            {
                 _isScrolling = true;
-            }
             Debug.WriteLine("HorizontalDelta: " + e.HorizontalDelta);
             Debug.WriteLine("VerticalDelta: " + e.VerticalDelta);
             Debug.WriteLine("HorizontalOffset: " + e.HorizontalOffset);
@@ -149,85 +219,13 @@ namespace Global.CalendarView.Controls
             Debug.WriteLine("LastVisibleItemIndex: " + e.LastVisibleItemIndex);
         }
 
-        /// <summary>
-        ///     Gets or sets the skeleton template.
-        /// </summary>
-        /// <value>The day template attributes.</value>
-        public ControlTemplate SkeletonTemplate
-        {
-            get => (ControlTemplate)GetValue(SkeletonTemplateProperty);
-            set => SetValue(SkeletonTemplateProperty, value);
-        }
-
-        /// <summary>
-        ///     Gets or sets the month template.
-        /// </summary>
-        /// <value>The day template attributes.</value>
-        public ControlTemplate MonthTemplate
-        {
-            get => (ControlTemplate)GetValue(MonthTemplateProperty);
-            set => SetValue(MonthTemplateProperty, value);
-        }
-
-        /// <summary>
-        ///     Gets or sets the current date.
-        /// </summary>
-        /// <value>The current date attributes.</value>
-        public DateTime CurrentDate
-        {
-            get => (DateTime)GetValue(CurrentDateProperty);
-            set => SetValue(CurrentDateProperty, value);
-        }
-
-        /// <summary>
-        ///     Gets or sets the minimum date.
-        /// </summary>
-        /// <value>The minimun date attributes.</value>
-        public DateTime MinDate
-        {
-            get => (DateTime)GetValue(MinDateProperty);
-            set => SetValue(MinDateProperty, value);
-        }
-
-        /// <summary>
-        ///     Gets or sets the maximum date.
-        /// </summary>
-        /// <value>The maximum date attributes.</value>
-        public DateTime MaxDate
-        {
-            get => (DateTime)GetValue(MaxDateProperty);
-            set => SetValue(MaxDateProperty, value);
-        }
-
-        /// <summary>
-        ///     Gets or sets marked dates.
-        /// </summary>
-        /// <value>The marked dates attributes.</value>
-        public CalendarDictionary<DateTime, object> MarkedDates
-        {
-            get => (CalendarDictionary<DateTime, object>)GetValue(MarkedDatesProperty);
-            set => SetValue(MarkedDatesProperty, value);
-        }
-
-        public ObservableCollection<MonthCell> VisibleViews
-        {
-            get => (ObservableCollection<MonthCell>)GetValue(VisibleViewsProperty);
-            private set => SetValue(MarkedDatesProperty, value);
-        }
-
-        public double TemplateViewHeight
-        {
-            get => (double)GetValue(TemplateViewHeightProperty);
-            set => SetValue(TemplateViewHeightProperty, value);
-        }
-
         private static void CurrentDateChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is CalendarList calendarList)
             {
                 //var month = calendarList._monthList.Find(d => d.Value.Year == calendarList.CurrentDate.Year && d.Value.Month == calendarList.CurrentDate.Month);
                 //if (month != default)
-                    
+
                 //    calendarList._collectionView.ScrollTo(month);
             }
         }
@@ -236,7 +234,7 @@ namespace Global.CalendarView.Controls
         {
             if (MaxDate != default && MinDate != default)
             {
-                var numberOfMonths = ((MaxDate.Year - MinDate.Year) * 12) + MaxDate.Month - MinDate.Month + 1;
+                var numberOfMonths = (MaxDate.Year - MinDate.Year) * 12 + MaxDate.Month - MinDate.Month + 1;
 
                 var list = new List<DateTime>();
                 Enumerable.Range(0, numberOfMonths).ForEach(d =>
@@ -273,6 +271,5 @@ namespace Global.CalendarView.Controls
         //        month.UpdateAllMarkers();
         //    }
         //}
-
     }
 }

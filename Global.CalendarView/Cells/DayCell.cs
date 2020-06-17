@@ -8,8 +8,6 @@ namespace Global.CalendarView.Controls
 {
     public abstract class DayCell : ContentView, INotifyPropertyChanged
     {
-        public event EventHandler DateChanged;
-
         private DateTime _date;
 
         private int _index;
@@ -40,6 +38,8 @@ namespace Global.CalendarView.Controls
             get => _index;
             set => SetProperty(ref _index, value);
         }
+
+        public event EventHandler DateChanged;
 
         protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "",
             Action onChanged = null)

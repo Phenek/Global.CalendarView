@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xamarin.Essentials;
+﻿using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace SampleApp
@@ -21,17 +18,14 @@ namespace SampleApp
             info = DeviceDisplay.MainDisplayInfo;
         }
 
-        protected async override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            if (_animated)
-            {
-                await _logo.TranslateTo(0.0, -info.Height / info.Density / 3, _duration, Easing.Linear);
-            }
+            if (_animated) await _logo.TranslateTo(0.0, -info.Height / info.Density / 3, _duration, Easing.Linear);
             Application.Current.MainPage = new NavigationPage(new MenuPage())
             {
-                BarBackgroundColor = (Color)Application.Current.Resources["PrimaryColor"]
+                BarBackgroundColor = (Color) Application.Current.Resources["PrimaryColor"]
             };
         }
     }

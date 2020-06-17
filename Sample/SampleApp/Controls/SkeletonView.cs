@@ -1,5 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace SampleApp.Controls
 {
@@ -9,7 +8,8 @@ namespace SampleApp.Controls
         ///     The Entry Title property.
         /// </summary>
         public static readonly BindableProperty AnimatedProperty =
-            BindableProperty.Create(nameof(Animated), typeof(bool), typeof(SkeletonView), true, propertyChanged: AnimatedChanged);
+            BindableProperty.Create(nameof(Animated), typeof(bool), typeof(SkeletonView), true,
+                propertyChanged: AnimatedChanged);
 
         public SkeletonView()
         {
@@ -25,8 +25,8 @@ namespace SampleApp.Controls
             };
 
             if (Animated)
-                Device.BeginInvokeOnMainThread(() => smoothAnimation.Commit(this, "SmoothAnimation", 16, 2000, Easing.Linear, null, () => true));
-
+                Device.BeginInvokeOnMainThread(() =>
+                    smoothAnimation.Commit(this, "SmoothAnimation", 16, 2000, Easing.Linear, null, () => true));
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace SampleApp.Controls
         /// <value>The entry text.</value>
         public bool Animated
         {
-            get => (bool)GetValue(AnimatedProperty);
+            get => (bool) GetValue(AnimatedProperty);
             set => SetValue(AnimatedProperty, value);
         }
 
@@ -49,11 +49,13 @@ namespace SampleApp.Controls
                         {0, 0.5, new Animation(f => v.Opacity = f, 1, 0.2, Easing.Linear)},
                         {0.5, 1, new Animation(f => v.Opacity = f, 0.2, 1, Easing.Linear)}
                     };
-                    Device.BeginInvokeOnMainThread(() => smoothAnimation.Commit(v, "SmoothAnimation", 16, 2000, Easing.Linear, null, () => true));
+                    Device.BeginInvokeOnMainThread(() =>
+                        smoothAnimation.Commit(v, "SmoothAnimation", 16, 2000, Easing.Linear, null, () => true));
                 }
                 else
+                {
                     Device.BeginInvokeOnMainThread(() => v.AbortAnimation("SmoothAnimation"));
+                }
         }
-
     }
 }

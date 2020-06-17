@@ -45,9 +45,10 @@ namespace Global.CalendarView.Controls
         public static readonly BindableProperty RightViewProperty = BindableProperty.Create(nameof(RightView),
             typeof(View), typeof(Panel), null, propertyChanged: RightViewChanged);
 
-        private bool _isBusy;
         private readonly TapGestureRecognizer _leftClicked = new TapGestureRecognizer();
         private readonly TapGestureRecognizer _rightClicked = new TapGestureRecognizer();
+
+        private bool _isBusy;
 
         public Panel()
         {
@@ -216,7 +217,8 @@ namespace Global.CalendarView.Controls
             if (LeftView != null)
                 LeftView.BindingContext = LeftView.IsEnabled = CurrentDate.AddMonths(-1).GetLastDayOfMonth() >= MinDate;
             if (RightView != null)
-                RightView.BindingContext = RightView.IsEnabled = CurrentDate.AddMonths(1).GetFirstDayOfMonth() <= MaxDate;
+                RightView.BindingContext =
+                    RightView.IsEnabled = CurrentDate.AddMonths(1).GetFirstDayOfMonth() <= MaxDate;
         }
     }
 }

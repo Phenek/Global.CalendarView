@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using SampleApp.Controls;
-using SampleApp.Views;
-using Xamarin.Forms;
+﻿using SampleApp.Views;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace SampleApp
 {
@@ -20,12 +17,9 @@ namespace SampleApp
 
             _logo.TranslationY = -info.Height / info.Density / 3;
 
-            toCalendarTabBtn.Clicked += (sender, e) =>
-            { Navigation.PushAsync(new CalendarTabPage()); };
-            toCalendarListBtn.Clicked += (sender, e) =>
-            { Navigation.PushAsync(new CalendarListPage()); };
-            toCalendarList2Btn.Clicked += (sender, e) =>
-            { Navigation.PushAsync(new CalendarList2Page()); };
+            toCalendarTabBtn.Clicked += (sender, e) => { Navigation.PushAsync(new CalendarTabPage()); };
+            toCalendarListBtn.Clicked += (sender, e) => { Navigation.PushAsync(new CalendarListPage()); };
+            toCalendarList2Btn.Clicked += (sender, e) => { Navigation.PushAsync(new CalendarList2Page()); };
         }
 
         protected override void OnAppearing()

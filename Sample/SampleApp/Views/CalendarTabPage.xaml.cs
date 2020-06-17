@@ -1,8 +1,6 @@
 ﻿using System;
 using SampleApp.ViewModels;
 using Xamarin.Forms;
-using Global.InputForms;
-using Global.CalendarView.Controls;
 
 namespace SampleApp.Views
 {

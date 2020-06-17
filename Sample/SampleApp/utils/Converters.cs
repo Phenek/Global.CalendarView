@@ -20,7 +20,7 @@ namespace SampleApp.Utils
         /// <returns>Negated boolean value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(bool)value;
+            return !(bool) value;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace SampleApp.Utils
         /// <remarks>To be added.</remarks>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(bool)value;
+            return !(bool) value;
         }
     }
 
@@ -90,7 +90,7 @@ namespace SampleApp.Utils
         {
             if (value == null) return null;
 
-            return ((DateTime)value).ToString("ddd").ToUpper();
+            return ((DateTime) value).ToString("ddd").ToUpper();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -98,5 +98,4 @@ namespace SampleApp.Utils
             return string.Empty;
         }
     }
-
 }

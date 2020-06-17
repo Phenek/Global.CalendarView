@@ -79,7 +79,8 @@ namespace Global.CalendarView.Controls
                     }).ToList<View>();
                 foreach (var d in _daysOfWeek)
                     d.SetBinding(Label.TextProperty,
-                        new Binding(nameof(BindingContext)) {Source = d, Mode = BindingMode.OneWay, StringFormat = "ddd"});
+                        new Binding(nameof(BindingContext))
+                            {Source = d, Mode = BindingMode.OneWay, StringFormat = "ddd"});
             }
             else
             {

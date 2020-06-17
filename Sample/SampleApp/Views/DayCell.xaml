@@ -1,28 +1,29 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<calendar:DayCell xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:views="clr-namespace:SampleApp.Views"
-             xmlns:utils="clr-namespace:SampleApp.Utils"
-             xmlns:calendar="clr-namespace:Global.CalendarView.Controls;assembly=Global.CalendarView"
-             x:Class="SampleApp.Views.DayCell"
-             BackgroundColor="White"
-             x:Name="_dayCell">
 
-            <calendar:DayCell.Resources>
-                <ResourceDictionary>
-                    <utils:InverseBooleanConverter x:Key="InverseBool" />
-                    <Thickness x:Key="Margin" Left="-5" Right="-5" Bottom="1" Top="1" />
-                </ResourceDictionary>
-            </calendar:DayCell.Resources>
+<calendar:DayCell xmlns="http://xamarin.com/schemas/2014/forms"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  xmlns:views="clr-namespace:SampleApp.Views"
+                  xmlns:utils="clr-namespace:SampleApp.Utils"
+                  xmlns:calendar="clr-namespace:Global.CalendarView.Controls;assembly=Global.CalendarView"
+                  x:Class="SampleApp.Views.DayCell"
+                  BackgroundColor="White"
+                  x:Name="_dayCell">
+
+    <calendar:DayCell.Resources>
+        <ResourceDictionary>
+            <utils:InverseBooleanConverter x:Key="InverseBool" />
+            <Thickness x:Key="Margin" Left="-5" Right="-5" Bottom="1" Top="1" />
+        </ResourceDictionary>
+    </calendar:DayCell.Resources>
 
     <Grid IsVisible="{Binding OutOfMonth, Converter={StaticResource InverseBool}, Source={x:Reference _dayCell}}"
           BackgroundColor="White"
           HorizontalOptions="Fill" VerticalOptions="Fill" IsClippedToBounds="True">
 
         <BoxView x:Name="_frame" CornerRadius="5"
-               Margin="{Binding FrameMargin, FallbackValue={StaticResource Margin}}"
-               BackgroundColor="{Binding FrameColor, FallbackValue=Transparent}"
-               HeightRequest="40"/>
+                 Margin="{Binding FrameMargin, FallbackValue={StaticResource Margin}}"
+                 BackgroundColor="{Binding FrameColor, FallbackValue=Transparent}"
+                 HeightRequest="40" />
 
         <Frame x:Name="_dayFrame" Margin="5" Padding="0" CornerRadius="15"
                HeightRequest="30"

@@ -95,7 +95,7 @@ namespace Global.CalendarView.Controls
         /// <value>The current date attributes.</value>
         public DateTime CurrentDate
         {
-            get => (DateTime)GetValue(CurrentDateProperty);
+            get => (DateTime) GetValue(CurrentDateProperty);
             set => SetValue(CurrentDateProperty, value);
         }
 
@@ -105,7 +105,7 @@ namespace Global.CalendarView.Controls
         /// <value>The minimun date attributes.</value>
         public DateTime MinDate
         {
-            get => (DateTime)GetValue(MinDateProperty);
+            get => (DateTime) GetValue(MinDateProperty);
             set => SetValue(MinDateProperty, value);
         }
 
@@ -115,7 +115,7 @@ namespace Global.CalendarView.Controls
         /// <value>The maximum date attributes.</value>
         public DateTime MaxDate
         {
-            get => (DateTime)GetValue(MaxDateProperty);
+            get => (DateTime) GetValue(MaxDateProperty);
             set => SetValue(MaxDateProperty, value);
         }
 
@@ -125,7 +125,7 @@ namespace Global.CalendarView.Controls
         /// <value>The current date attributes.</value>
         public DayOfWeek FirstDay
         {
-            get => (DayOfWeek)GetValue(FirstDayProperty);
+            get => (DayOfWeek) GetValue(FirstDayProperty);
             set => SetValue(FirstDayProperty, value);
         }
 
@@ -135,7 +135,7 @@ namespace Global.CalendarView.Controls
         /// <value>The day template attributes.</value>
         public ControlTemplate DayTemplate
         {
-            get => (ControlTemplate)GetValue(DayTemplateProperty);
+            get => (ControlTemplate) GetValue(DayTemplateProperty);
             set => SetValue(DayTemplateProperty, value);
         }
 
@@ -145,7 +145,7 @@ namespace Global.CalendarView.Controls
         /// <value>The day template attributes.</value>
         public ControlTemplate WeekDayTemplate
         {
-            get => (ControlTemplate)GetValue(WeekDayTemplateProperty);
+            get => (ControlTemplate) GetValue(WeekDayTemplateProperty);
             set => SetValue(WeekDayTemplateProperty, value);
         }
 
@@ -155,17 +155,17 @@ namespace Global.CalendarView.Controls
         /// <value>The marked dates attributes.</value>
         public CalendarDictionary<DateTime, object> MarkedDates
         {
-            get => (CalendarDictionary<DateTime, object>)GetValue(MarkedDatesProperty);
+            get => (CalendarDictionary<DateTime, object>) GetValue(MarkedDatesProperty);
             set => SetValue(MarkedDatesProperty, value);
         }
 
         private Grid PanelBuilder()
         {
             var panel = new Grid();
-            panel.RowDefinitions.Add(new RowDefinition { Height = 80 });
-            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
-            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            panel.RowDefinitions.Add(new RowDefinition {Height = 80});
+            panel.ColumnDefinitions.Add(new ColumnDefinition {Width = GridLength.Star});
+            panel.ColumnDefinitions.Add(new ColumnDefinition {Width = new GridLength(2, GridUnitType.Star)});
+            panel.ColumnDefinitions.Add(new ColumnDefinition {Width = GridLength.Star});
 
             _left = new Label
             {
@@ -308,8 +308,8 @@ namespace Global.CalendarView.Controls
         {
             if (bindable is Calendar calendar)
             {
-                calendar._weekDays.FirstDay = (DayOfWeek)newValue;
-                calendar._month.FirstDay = (DayOfWeek)newValue;
+                calendar._weekDays.FirstDay = (DayOfWeek) newValue;
+                calendar._month.FirstDay = (DayOfWeek) newValue;
             }
         }
 
@@ -327,7 +327,8 @@ namespace Global.CalendarView.Controls
 
         private static void WeekDayTemplateChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is Calendar calendar && newValue is ControlTemplate template) calendar._weekDays.WeekDayTemplate = template;
+            if (bindable is Calendar calendar && newValue is ControlTemplate template)
+                calendar._weekDays.WeekDayTemplate = template;
         }
 
         /// <summary>
@@ -339,7 +340,7 @@ namespace Global.CalendarView.Controls
         private static void MarkedDatesChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is Calendar calendar)
-                calendar._month.MarkedDates = (CalendarDictionary<DateTime, object>)newValue;
+                calendar._month.MarkedDates = (CalendarDictionary<DateTime, object>) newValue;
         }
     }
 

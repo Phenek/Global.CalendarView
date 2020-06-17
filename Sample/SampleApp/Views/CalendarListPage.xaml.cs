@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using SampleApp.ViewModels;
 using Xamarin.Forms;
-using Global.InputForms;
-using Global.CalendarView.Controls;
-using System;
 
 namespace SampleApp.Views
 {
     public partial class CalendarListPage : ContentPage
     {
-        private CalendarViewModel _viewModel;
+        private readonly CalendarViewModel _viewModel;
 
         public CalendarListPage()
         {

@@ -10,10 +10,10 @@ namespace SampleApp.ViewModels
         public DateTime End;
 
         public Color FrameColor => Date.Date == Begin.Date || Date.Date == End.Date
-            ? (Color)Application.Current.Resources["PrimaryColor"]
+            ? (Color) Application.Current.Resources["PrimaryColor"]
             : Date.Date > Begin.Date && Date.Date < End.Date
-            ? Color.Salmon
-            : Color.Transparent;
+                ? Color.Salmon
+                : Color.Transparent;
 
         public Color DayColor => Date == DateTime.Today ? Color.Black : Color.Transparent;
 

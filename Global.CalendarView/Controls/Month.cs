@@ -60,7 +60,7 @@ namespace Global.CalendarView.Controls
         ///     The first day of week property.
         /// </summary>
         public static readonly BindableProperty CalendarModeProperty =
-            BindableProperty.Create(nameof(CalendarMode), typeof(CalendarMode), typeof(Month), default);
+            BindableProperty.Create(nameof(CalendarMode), typeof(CalendarMode), typeof(Month));
 
         private Grid _grid;
 
@@ -70,7 +70,6 @@ namespace Global.CalendarView.Controls
         {
             DaysViews = new List<DayCell>();
             MarkedDates.CollectionChanged += (sender, e) => MarkedDatesCollectionChanged(e);
-
         }
 
         public Month(DayOfWeek firstDay, DateTime currentDate, DateTime minDate, DateTime maxDate,
@@ -162,7 +161,7 @@ namespace Global.CalendarView.Controls
         /// <value>The current date attributes.</value>
         public CalendarMode CalendarMode
         {
-            get => (CalendarMode)GetValue(CalendarModeProperty);
+            get => (CalendarMode) GetValue(CalendarModeProperty);
             set => SetValue(CalendarModeProperty, value);
         }
 
@@ -201,27 +200,26 @@ namespace Global.CalendarView.Controls
                         RowSpacing = 0
                     };
                     _grid.SetBinding(BackgroundColorProperty,
-                        new Binding(nameof(BackgroundColor)) { Source = this, Mode = BindingMode.OneWay });
+                        new Binding(nameof(BackgroundColor)) {Source = this, Mode = BindingMode.OneWay});
 
                     _grid.ColumnDefinitions =
-                    new ColumnDefinitionCollection
-                    {
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                    };
+                        new ColumnDefinitionCollection
+                        {
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)}
+                        };
 
                     // 6 weeks max in a month
                     for (var i = 0; i < 6; ++i)
                     {
-                        _grid.RowDefinitions.Add(new RowDefinition { Height = 50 });
+                        _grid.RowDefinitions.Add(new RowDefinition {Height = 50});
                         // 7 days in a weeks
                         for (var j = 0; j < 7; ++j)
-                        {
                             if (DayTemplate != null)
                             {
                                 if (DayTemplate.CreateContent() is DayCell day)
@@ -241,7 +239,6 @@ namespace Global.CalendarView.Controls
                                     throw new InvalidOperationException("DayTemplate must be either a DayCell");
                                 }
                             }
-                        }
                     }
 
                     Device.InvokeOnMainThreadAsync(() =>
@@ -331,10 +328,8 @@ namespace Global.CalendarView.Controls
         private static void CurrentMonthChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is Month month)
-            {
                 if (month.CalendarMode != CalendarMode.List)
                     month.LoadDays();
-            }
         }
 
         /// <summary>
@@ -345,10 +340,7 @@ namespace Global.CalendarView.Controls
         /// <param name="newValue">The new value.</param>
         private static void FirstDayChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is Month month)
-            {
-                month.LoadDays();
-            }
+            if (bindable is Month month) month.LoadDays();
         }
 
         /// <summary>

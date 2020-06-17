@@ -1,9 +1,6 @@
 ﻿using System.Reflection;
 using System.Resources;
-using SampleApp.Controls;
 using SampleApp.Styles;
-using SampleApp.Views;
-using Global.InputForms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -20,7 +17,6 @@ namespace SampleApp
             InitializeComponent();
 
             Resources.MergedDictionaries.Add(new ButtonStyles());
-            Resources.MergedDictionaries.Add(new CheckStyles());
             Resources.MergedDictionaries.Add(new EntryStyles());
 
             MainPage = new SplashScreen();

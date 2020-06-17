@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Global.CalendarView.Controls;
-using Global.InputForms.Models;
-using Naxam.I18n;
-using Naxam.I18n.Forms;
-using SampleApp.Models;
 using Xamarin.Essentials;
-using Xamarin.Forms;
 
 namespace SampleApp.ViewModels
 {
