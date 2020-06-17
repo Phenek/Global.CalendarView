@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace SampleApp.Views
 {
-    public partial class MonthCell : Global.CalendarView.Controls.MonthCell
+    public partial class MonthCell : ContentView
     {
         public MonthCell()
         {

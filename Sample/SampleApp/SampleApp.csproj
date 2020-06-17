@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="SimpleForms.cs" />
+    <Compile Remove="Views\CalendarListPage %28copy%29.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />

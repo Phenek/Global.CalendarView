@@ -13,9 +13,9 @@ namespace Global.CalendarView.Controls
         /// <summary>
         ///     The current date property.
         /// </summary>
-        public static readonly BindableProperty CurrentDateProperty =
-            BindableProperty.Create(nameof(CurrentDate), typeof(DateTime), typeof(Month), DateTime.Today,
-                propertyChanged: CurrentDateChanged);
+        public static readonly BindableProperty CurrentMonthProperty =
+            BindableProperty.Create(nameof(CurrentMonth), typeof(DateTime), typeof(Month), DateTime.Today,
+                propertyChanged: CurrentMonthChanged);
 
         /// <summary>
         ///     The min date property.
@@ -77,7 +77,7 @@ namespace Global.CalendarView.Controls
             CalendarDictionary<DateTime, object> markedDates)
         {
             FirstDay = firstDay;
-            CurrentDate = currentDate;
+            CurrentMonth = currentDate;
             MinDate = minDate;
             MaxDate = maxDate;
             MarkedDates = markedDates;
@@ -100,10 +100,10 @@ namespace Global.CalendarView.Controls
         ///     Gets or sets the current date.
         /// </summary>
         /// <value>The current date attributes.</value>
-        public DateTime CurrentDate
+        public DateTime CurrentMonth
         {
-            get => (DateTime) GetValue(CurrentDateProperty);
-            set => SetValue(CurrentDateProperty, value);
+            get => (DateTime) GetValue(CurrentMonthProperty);
+            set => SetValue(CurrentMonthProperty, value);
         }
 
         /// <summary>
@@ -202,12 +202,26 @@ namespace Global.CalendarView.Controls
                     };
                     _grid.SetBinding(BackgroundColorProperty,
                         new Binding(nameof(BackgroundColor)) { Source = this, Mode = BindingMode.OneWay });
+
+                    _grid.ColumnDefinitions =
+                    new ColumnDefinitionCollection
+                    {
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                    };
+
                     // 6 weeks max in a month
                     for (var i = 0; i < 6; ++i)
                     {
                         _grid.RowDefinitions.Add(new RowDefinition { Height = 50 });
                         // 7 days in a weeks
                         for (var j = 0; j < 7; ++j)
+                        {
                             if (DayTemplate != null)
                             {
                                 if (DayTemplate.CreateContent() is DayCell day)
@@ -227,6 +241,7 @@ namespace Global.CalendarView.Controls
                                     throw new InvalidOperationException("DayTemplate must be either a DayCell");
                                 }
                             }
+                        }
                     }
 
                     Device.InvokeOnMainThreadAsync(() =>
@@ -274,7 +289,7 @@ namespace Global.CalendarView.Controls
                 if (i < dates.Count())
                 {
                     var date = dates[i];
-                    var outOfMonth = date.Month != CurrentDate.Month;
+                    var outOfMonth = date.Month != CurrentMonth.Month;
 
                     if (MarkedDates != null && MarkedDates.ContainsKey(date))
                         dayView.BindingContext = MarkedDates[date];
@@ -298,8 +313,8 @@ namespace Global.CalendarView.Controls
 
         private List<DateTime> GetDates()
         {
-            var begin = CurrentDate.GetFirstDayOfMonth().GetFirstDayOfWeek(FirstDay);
-            var end = CurrentDate.GetLastDayOfMonth().GetLastDayOfWeek(FirstDay);
+            var begin = CurrentMonth.GetFirstDayOfMonth().GetFirstDayOfWeek(FirstDay);
+            var end = CurrentMonth.GetLastDayOfMonth().GetLastDayOfWeek(FirstDay);
             var numberOfDays = Convert.ToInt32((end - begin).TotalDays);
 
             return Enumerable.Range(0, numberOfDays)
@@ -313,7 +328,7 @@ namespace Global.CalendarView.Controls
         /// <param name="bindable">The object.</param>
         /// <param name="oldValue">The old value.</param>
         /// <param name="newValue">The new value.</param>
-        private static void CurrentDateChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void CurrentMonthChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is Month month)
             {

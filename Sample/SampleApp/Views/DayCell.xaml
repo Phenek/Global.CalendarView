@@ -11,18 +11,18 @@
             <calendar:DayCell.Resources>
                 <ResourceDictionary>
                     <utils:InverseBooleanConverter x:Key="InverseBool" />
-                    <Thickness x:Key="Margin" Left="-5" Right="-5" Bottom="0" Top="0" />
+                    <Thickness x:Key="Margin" Left="-5" Right="-5" Bottom="1" Top="1" />
                 </ResourceDictionary>
             </calendar:DayCell.Resources>
 
     <Grid IsVisible="{Binding OutOfMonth, Converter={StaticResource InverseBool}, Source={x:Reference _dayCell}}"
           BackgroundColor="White"
-          HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsClippedToBounds="True">
+          HorizontalOptions="Fill" VerticalOptions="Fill" IsClippedToBounds="True">
 
-        <Frame x:Name="_frame" Padding="0" CornerRadius="5"
+        <BoxView x:Name="_frame" CornerRadius="5"
                Margin="{Binding FrameMargin, FallbackValue={StaticResource Margin}}"
                BackgroundColor="{Binding FrameColor, FallbackValue=Transparent}"
-               HeightRequest="40" BorderColor="Transparent" HasShadow="false" />
+               HeightRequest="40"/>
 
         <Frame x:Name="_dayFrame" Margin="5" Padding="0" CornerRadius="15"
                HeightRequest="30"

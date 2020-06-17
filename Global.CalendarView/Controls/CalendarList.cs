@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Xamarin.Forms;
@@ -48,11 +49,27 @@ namespace Global.CalendarView.Controls
             BindableProperty.Create(nameof(MarkedDates), typeof(CalendarDictionary<DateTime, object>), typeof(CalendarList),
                 new CalendarDictionary<DateTime, object>());//, propertyChanged: MarkedDatesChanged);
 
+        /// <summary>
+        ///     The Visible views property.
+        /// </summary>
+        public static readonly BindableProperty VisibleViewsProperty =
+            BindableProperty.Create(nameof(VisibleViews), typeof(ObservableCollection<MonthCell>), typeof(Calendar),
+                new ObservableCollection<MonthCell>());
+
+        /// <summary>
+        ///     The Month template Height property.
+        /// </summary>
+        public static readonly BindableProperty TemplateViewHeightProperty =
+            BindableProperty.Create(nameof(TemplateViewHeight), typeof(double), typeof(Calendar),
+                -1d);
+
 
         public EventHandler<SelectedItemChangedEventArgs> ClickedDay;
-        private Dictionary<int, DateTime> _monthList;
+        private List<DateTime> _monthList;
         private List<MonthCell> _monthCellList = new List<MonthCell>();
         private CollectionView _collectionView;
+        private double _verticalDelta;
+        private bool _isScrolling;
 
         public CalendarList()
         {
@@ -63,36 +80,65 @@ namespace Global.CalendarView.Controls
             };
             _collectionView.ItemTemplate = new DataTemplate(() =>
             {
-                var monthCell = new MonthCell();
+                var monthCell = new MonthCell(this);
                 _monthCellList.Add(monthCell);
                 return monthCell;
             });
 
             _collectionView.Scrolled += _collectionViewScrolledLoadDays;
+            //VisibleViews.CollectionChanged += VisibleViews_CollectionChanged;
 
             Content = _collectionView;
         }
 
+        //private void VisibleViews_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        //{
+        //    VisibleViews.OrderBy(o => (_verticalDelta > 0) ? o.VisibleIndex : -o.VisibleIndex)
+        //            .ForEach((cell) =>
+        //            {
+        //                if (!_isScrolling && !cell.IsLoaded)
+        //                    cell.LoadCell();
+        //            });
+        //}
+
         private void _collectionViewScrolledLoadDays(object sender, ItemsViewScrolledEventArgs e)
         {
+            _verticalDelta = e.VerticalDelta;
+
+            if (Math.Abs(e.VerticalDelta) < 10
+            || e.LastVisibleItemIndex == _monthList.Count - 1
+            || e.FirstVisibleItemIndex == 0)
+            {
+                if (e.LastVisibleItemIndex == _monthList.Count - 1)
+                    Console.WriteLine("EndOfTheList");
+                else if (e.FirstVisibleItemIndex == 0)
+                    Console.WriteLine("StartOfTheList");
+                else
+                    Console.WriteLine("Middle");
+
+                _monthCellList//.OrderBy(o => (e.VerticalDelta > 0) ? o.VisibleIndex :- o.VisibleIndex)
+                .ForEach((cell) =>
+                {
+                    int index = _monthList.FindIndex(a =>
+                    {
+                        if (!(cell.BindingContext is DateTime cellDate)) return false;
+                        return a == cellDate;
+                    });
+                    if (index >= e.FirstVisibleItemIndex && index <= e.LastVisibleItemIndex)
+                    {
+                        if (!cell.IsLoaded)
+                            cell.LoadCell();
+                    }
+                });
+            }
+
             if (Math.Abs(e.VerticalDelta) < 10)
             {
-                _monthCellList.ForEach((cell) =>
-                {
-                    if (cell.VisibleIndex > e.FirstVisibleItemIndex && cell.VisibleIndex < e.LastVisibleItemIndex
-                    || cell.VisibleIndex == e.FirstVisibleItemIndex || cell.VisibleIndex == e.LastVisibleItemIndex)
-                    {
-                        cell.LoadCell();
-                    }
-                    cell.IsScrolling = false;
-                });
+                _isScrolling = false;
             }
             else
             {
-                _monthCellList.ForEach((cell) =>
-                {
-                    cell.IsScrolling = true;
-                });
+                _isScrolling = true;
             }
             Debug.WriteLine("HorizontalDelta: " + e.HorizontalDelta);
             Debug.WriteLine("VerticalDelta: " + e.VerticalDelta);
@@ -163,6 +209,18 @@ namespace Global.CalendarView.Controls
             set => SetValue(MarkedDatesProperty, value);
         }
 
+        public ObservableCollection<MonthCell> VisibleViews
+        {
+            get => (ObservableCollection<MonthCell>)GetValue(VisibleViewsProperty);
+            private set => SetValue(MarkedDatesProperty, value);
+        }
+
+        public double TemplateViewHeight
+        {
+            get => (double)GetValue(TemplateViewHeightProperty);
+            set => SetValue(TemplateViewHeightProperty, value);
+        }
+
         private static void CurrentDateChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is CalendarList calendarList)
@@ -174,21 +232,21 @@ namespace Global.CalendarView.Controls
             }
         }
 
-        private Dictionary<int, DateTime> GetRangeMonths()
+        private List<DateTime> GetRangeMonths()
         {
             if (MaxDate != default && MinDate != default)
             {
                 var numberOfMonths = ((MaxDate.Year - MinDate.Year) * 12) + MaxDate.Month - MinDate.Month + 1;
 
-                var dic = new Dictionary<int, DateTime>();
+                var list = new List<DateTime>();
                 Enumerable.Range(0, numberOfMonths).ForEach(d =>
                 {
-                    dic.Add(d, MinDate.GetFirstDayOfMonth().AddMonths(d));
+                    list.Add(MinDate.GetFirstDayOfMonth().AddMonths(d));
                 });
-                return dic;
+                return list;
             }
 
-            return new Dictionary<int, DateTime>();
+            return new List<DateTime>();
         }
 
         public void PropagateClickedDate(object sender, SelectedItemChangedEventArgs e)

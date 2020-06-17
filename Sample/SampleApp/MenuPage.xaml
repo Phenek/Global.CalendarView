@@ -24,6 +24,10 @@
                         <BoxView Margin="20,0,20,0" HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource SeparatorColor}" />
                         <controls:ButtonInputs x:Name="toCalendarListBtn" Title="CalendarList"/>
                         <BoxView Margin="20,0,20,0" HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource SeparatorColor}" />
+
+                        <controls:ButtonInputs x:Name="toCalendarList2Btn" Title="CalendarList2"/>
+                        <BoxView Margin="20,0,20,0" HeightRequest="2" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource SeparatorColor}" />
+                       
                     </StackLayout>
                 </ContentView>
         </ScrollView>

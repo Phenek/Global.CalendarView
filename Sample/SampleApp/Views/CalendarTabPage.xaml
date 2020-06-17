@@ -86,7 +86,7 @@
 
                 <calendar:Month x:Name="_calendar1"
                                 MinDate="{Binding MinDate, Mode=OneWay}" MaxDate="{Binding MaxDate, Mode=OneWay}"
-                                CurrentDate="{Binding CurrentDate, Mode=TwoWay}"
+                                CurrentMonth="{Binding CurrentDate, Mode=TwoWay}"
                                 FirstDay="Monday" BackgroundColor="White"
                                 MarkedDates="{Binding MarkedDates, Mode=OneWay}">
                     <calendar:Month.DayTemplate>

@@ -13,6 +13,12 @@
             <Color x:Key="MediumGrayTextColor">#4d4d4d</Color>
             <Color x:Key="LightTextColor">#999999</Color>
 
+            <Color x:Key="BlackRedColor">#380105</Color>
+            <Color x:Key="DarkRedColor">#720A13</Color>
+            <Color x:Key="RedColor">#B63029</Color>
+            <Color x:Key="LightRedColor">#F4B2B0</Color>
+            <Color x:Key="WhiteRed">#FDF2F2</Color>
+
             <Color x:Key="BleuButtonBackground">#335D83</Color>
             <Color x:Key="BleuButtonHighlightBackground">#4b85b9</Color>
 
