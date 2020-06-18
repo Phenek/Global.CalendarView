@@ -202,44 +202,72 @@ namespace Global.CalendarView.Controls
                     _grid.SetBinding(BackgroundColorProperty,
                         new Binding(nameof(BackgroundColor)) {Source = this, Mode = BindingMode.OneWay});
 
-                    _grid.ColumnDefinitions =
-                        new ColumnDefinitionCollection
-                        {
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
-                            new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)}
-                        };
-
-                    // 6 weeks max in a month
-                    for (var i = 0; i < 6; ++i)
+                    var dates = Enumerable.Range(0, 6 * 7)
+                        .Select(d => new DateTime())
+                        .ToList();
+                    var itemTemplate = new DataTemplate(() =>
                     {
-                        _grid.RowDefinitions.Add(new RowDefinition {Height = 50});
-                        // 7 days in a weeks
-                        for (var j = 0; j < 7; ++j)
-                            if (DayTemplate != null)
-                            {
-                                if (DayTemplate.CreateContent() is DayCell day)
-                                {
-                                    day.Index = i * j;
-                                    Grid.SetColumn(day, j);
-                                    Grid.SetRow(day, i);
-                                    DaysViews.Add(day);
-                                    _grid.Children.Add(day);
+                        if (DayTemplate.CreateContent() is DayCell day)
+                        {
+                            day.Index = DaysViews.Count;
+                            Grid.SetColumn(day, day.Index % 7);
+                            Grid.SetRow(day, day.Index / 7 % 6);
 
-                                    var clicked = new TapGestureRecognizer();
-                                    clicked.Tapped += Clicked_Tapped;
-                                    day.GestureRecognizers.Add(clicked);
-                                }
-                                else
-                                {
-                                    throw new InvalidOperationException("DayTemplate must be either a DayCell");
-                                }
-                            }
-                    }
+                            DaysViews.Add(day);
+                            var clicked = new TapGestureRecognizer();
+                            clicked.Tapped += Clicked_Tapped;
+                            day.GestureRecognizers.Add(clicked);
+
+                            return day;
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("DayTemplate must be either a DayCell");
+                        }
+                    });
+
+                    BindableLayout.SetItemTemplate(_grid, itemTemplate);
+                    BindableLayout.SetItemsSource(_grid, dates);
+
+
+                    //_grid.ColumnDefinitions =
+                    //    new ColumnDefinitionCollection
+                    //    {
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)},
+                    //        new ColumnDefinition {Width = new GridLength(1, GridUnitType.Star)}
+                    //    };
+
+                    //// 6 weeks max in a month
+                    //for (var i = 0; i < 6; ++i)
+                    //{
+                    //    _grid.RowDefinitions.Add(new RowDefinition {Height = 50});
+                    //    // 7 days in a weeks
+                    //    for (var j = 0; j < 7; ++j)
+                    //        if (DayTemplate != null)
+                    //        {
+                    //            if (DayTemplate.CreateContent() is DayCell day)
+                    //            {
+                    //                day.Index = i * j;
+                    //                Grid.SetColumn(day, j);
+                    //                Grid.SetRow(day, i);
+                    //                DaysViews.Add(day);
+                    //                _grid.Children.Add(day);
+
+                    //                var clicked = new TapGestureRecognizer();
+                    //                clicked.Tapped += Clicked_Tapped;
+                    //                day.GestureRecognizers.Add(clicked);
+                    //            }
+                    //            else
+                    //            {
+                    //                throw new InvalidOperationException("DayTemplate must be either a DayCell");
+                    //            }
+                    //        }
+                    //}
 
                     Device.InvokeOnMainThreadAsync(() =>
                     {
