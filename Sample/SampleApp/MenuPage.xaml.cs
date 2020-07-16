@@ -19,7 +19,6 @@ namespace SampleApp
 
             toCalendarTabBtn.Clicked += (sender, e) => { Navigation.PushAsync(new CalendarTabPage()); };
             toCalendarListBtn.Clicked += (sender, e) => { Navigation.PushAsync(new CalendarListPage()); };
-            toCalendarList2Btn.Clicked += (sender, e) => { Navigation.PushAsync(new CalendarList2Page()); };
         }
 
         protected override void OnAppearing()

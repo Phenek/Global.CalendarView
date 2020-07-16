@@ -52,5 +52,13 @@ namespace Global.CalendarView.Controls
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+
+            if (BindingContext is DateTime date)
+                Date = date;
+        }
     }
 }

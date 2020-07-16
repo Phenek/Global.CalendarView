@@ -17,68 +17,43 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <calendar:CalendarList x:Name="_calendarList" TemplateViewHeight="428" BackgroundColor="White"
+    <calendar:CalendarList x:Name="_calendarList" BackgroundColor="White"
                            MarkedDates="{Binding MarkedDates, Mode=OneWay}">
-        <calendar:CalendarList.SkeletonTemplate>
-            <ControlTemplate>
-                <Label Text="{Binding ., Mode = OneWay, StringFormat='{}{0:MMMM yyyy}'}"
-                       BackgroundColor="White"
-                       FontAttributes="Bold"
-                       FontSize="30"
-                       TextColor="{StaticResource DarkRedColor}"
-                       VerticalTextAlignment="Center"
-                       HorizontalTextAlignment="Center"
-                       HorizontalOptions="FillAndExpand">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="{Binding ., Mode = OneWay, StringFormat='{}{0:MMMM}'}" />
-                            <Span Text="&#10;" />
-                            <Span Text="{Binding ., Mode = OneWay, StringFormat='{}{0:yyyy}'}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-            </ControlTemplate>
-        </calendar:CalendarList.SkeletonTemplate>
-        <calendar:CalendarList.MonthTemplate>
-            <ControlTemplate>
-                <StackLayout x:Name="_stack">
-                    <Label Text="{Binding ., Mode = OneWay, StringFormat='{}{0:MMMM yyyy}'}"
-                           BackgroundColor="White"
-                           FontAttributes="Bold"
-                           FontSize="Title"
-                           TextColor="{StaticResource DarkRedColor}"
-                           VerticalTextAlignment="Center"
-                           HorizontalTextAlignment="Center"
-                           HorizontalOptions="FillAndExpand"
-                           HeightRequest="60" />
+        <calendar:CalendarList.MonthHeaderTemplate>
+            <DataTemplate>
+                <StackLayout>
+                    <Label Text="{Binding Month, Mode = OneWay, StringFormat='{}{0:MMMM yyyy}'}"
+                               BackgroundColor="White"
+                               FontAttributes="Bold"
+                               FontSize="Title"
+                               TextColor="{StaticResource DarkRedColor}"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="FillAndExpand"
+                               HeightRequest="60" />
 
-                    <calendar:WeekDays FirstDay="Monday">
-                        <calendar:WeekDays.WeekDayTemplate>
-                            <ControlTemplate>
-                                <ContentView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
-                                             HeightRequest="40" BackgroundColor="White">
-                                    <Label
-                                        Text="{Binding ., Mode = OneWay, StringFormat='{}{0:ddd}'}"
-                                        FontSize="Default"
-                                        TextColor="{StaticResource RedColor}"
-                                        HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
-                                </ContentView>
-                            </ControlTemplate>
-                        </calendar:WeekDays.WeekDayTemplate>
-                    </calendar:WeekDays>
-
-                    <calendar:Month x:Name="_calendar1" CurrentMonth="{Binding ., Mode = OneWay}"
-                                    FirstDay="Monday" BackgroundColor="White">
-                        <calendar:Month.DayTemplate>
-                            <ControlTemplate>
-                                <views:DayCell />
-                            </ControlTemplate>
-                        </calendar:Month.DayTemplate>
-                    </calendar:Month>
-
+                        <calendar:WeekDays FirstDay="Monday">
+                            <calendar:WeekDays.WeekDayTemplate>
+                                <ControlTemplate>
+                                    <ContentView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                                                 HeightRequest="40" BackgroundColor="White">
+                                        <Label
+                                            Text="{Binding ., Mode = OneWay, StringFormat='{}{0:ddd}'}"
+                                            FontSize="Default"
+                                            TextColor="{StaticResource RedColor}"
+                                            HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+                                    </ContentView>
+                                </ControlTemplate>
+                            </calendar:WeekDays.WeekDayTemplate>
+                        </calendar:WeekDays>
                 </StackLayout>
-            </ControlTemplate>
-        </calendar:CalendarList.MonthTemplate>
+            </DataTemplate>
+        </calendar:CalendarList.MonthHeaderTemplate>
+        <calendar:CalendarList.DayTemplate>
+            <DataTemplate>
+                <views:DayCell BindingContext="{Binding .}" HeightRequest="40"/>
+            </DataTemplate>
+        </calendar:CalendarList.DayTemplate>
     </calendar:CalendarList>
 
 </ContentPage>

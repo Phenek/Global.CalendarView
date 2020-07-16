@@ -18,18 +18,30 @@ namespace Global.CalendarView.Controls
             typeof(ControlTemplate), typeof(CalendarList));
 
         /// <summary>
-        ///     The Month template property.
+        ///     The first day of week property.
         /// </summary>
-        public static readonly BindableProperty MonthTemplateProperty =
-            BindableProperty.Create(nameof(MonthTemplate), typeof(ControlTemplate),
-                typeof(CalendarList)); //, validateValue: ValidateDayTemplate);
+        public static readonly BindableProperty FirstDayProperty =
+            BindableProperty.Create(nameof(FirstDay), typeof(DayOfWeek), typeof(CalendarList), DayOfWeek.Sunday, propertyChanged: FirstDayChanged);
+
+        /// <summary>
+        ///     The day template property.
+        /// </summary>
+        public static readonly BindableProperty DayTemplateProperty =
+            BindableProperty.Create(nameof(DayTemplate), typeof(DataTemplate), typeof(CalendarList),
+                null);
+
+        /// <summary>
+        ///     The day template property.
+        /// </summary>
+        public static readonly BindableProperty MonthHeaderTemplateProperty =
+            BindableProperty.Create(nameof(MonthHeaderTemplate), typeof(DataTemplate), typeof(CalendarList),
+                null);
 
         /// <summary>
         ///     The current date property.
         /// </summary>
         public static readonly BindableProperty CurrentDateProperty =
-            BindableProperty.Create(nameof(CurrentDate), typeof(DateTime), typeof(CalendarList), default,
-                propertyChanged: CurrentDateChanged);
+            BindableProperty.Create(nameof(CurrentDate), typeof(DateTime), typeof(CalendarList), default);
 
         /// <summary>
         ///     The min date property.
@@ -52,24 +64,9 @@ namespace Global.CalendarView.Controls
                 typeof(CalendarList),
                 new CalendarDictionary<DateTime, object>()); //, propertyChanged: MarkedDatesChanged);
 
-        /// <summary>
-        ///     The Visible views property.
-        /// </summary>
-        public static readonly BindableProperty VisibleViewsProperty =
-            BindableProperty.Create(nameof(VisibleViews), typeof(ObservableCollection<MonthCell>), typeof(Calendar),
-                new ObservableCollection<MonthCell>());
-
-        /// <summary>
-        ///     The Month template Height property.
-        /// </summary>
-        public static readonly BindableProperty TemplateViewHeightProperty =
-            BindableProperty.Create(nameof(TemplateViewHeight), typeof(double), typeof(Calendar),
-                -1d);
-
         private readonly CollectionView _collectionView;
         private bool _isScrolling;
-        private readonly List<MonthCell> _monthCellList = new List<MonthCell>();
-        private readonly List<DateTime> _monthList;
+        private List<ListedDaysPerMonth> _monthList;
         private double _verticalDelta;
 
 
@@ -80,19 +77,28 @@ namespace Global.CalendarView.Controls
             _collectionView = new CollectionView
             {
                 SelectionMode = SelectionMode.None,
-                ItemsSource = _monthList = GetRangeMonths()
+                ItemsSource = _monthList = GetRangeMonths(),
+                ItemsLayout = new GridItemsLayout(7, ItemsLayoutOrientation.Vertical),
+                IsGrouped = true
             };
-            _collectionView.ItemTemplate = new DataTemplate(() =>
-            {
-                var monthCell = new MonthCell(this);
-                _monthCellList.Add(monthCell);
-                return monthCell;
-            });
 
-            _collectionView.Scrolled += _collectionViewScrolledLoadDays;
+            _collectionView.SetBinding(CollectionView.GroupHeaderTemplateProperty, new Binding(nameof(MonthHeaderTemplate)) { Source = this, Mode = BindingMode.OneWay });
+            _collectionView.SetBinding(CollectionView.ItemTemplateProperty, new Binding(nameof(DayTemplate)) { Source = this, Mode = BindingMode.OneWay });
+
+            //_collectionView.Scrolled += _collectionViewScrolledLoadDays;
             //VisibleViews.CollectionChanged += VisibleViews_CollectionChanged;
 
             Content = _collectionView;
+        }
+
+        /// <summary>
+        ///     Gets or sets the current date.
+        /// </summary>
+        /// <value>The current date attributes.</value>
+        public DayOfWeek FirstDay
+        {
+            get => (DayOfWeek)GetValue(FirstDayProperty);
+            set => SetValue(FirstDayProperty, value);
         }
 
         /// <summary>
@@ -106,13 +112,23 @@ namespace Global.CalendarView.Controls
         }
 
         /// <summary>
-        ///     Gets or sets the month template.
+        ///     Gets or sets the day template.
         /// </summary>
         /// <value>The day template attributes.</value>
-        public ControlTemplate MonthTemplate
+        public DataTemplate DayTemplate
         {
-            get => (ControlTemplate) GetValue(MonthTemplateProperty);
-            set => SetValue(MonthTemplateProperty, value);
+            get => (DataTemplate)GetValue(DayTemplateProperty);
+            set => SetValue(DayTemplateProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the Month Header template.
+        /// </summary>
+        /// <value>The day template attributes.</value>
+        public DataTemplate MonthHeaderTemplate
+        {
+            get => (DataTemplate)GetValue(MonthHeaderTemplateProperty);
+            set => SetValue(MonthHeaderTemplateProperty, value);
         }
 
         /// <summary>
@@ -155,96 +171,82 @@ namespace Global.CalendarView.Controls
             set => SetValue(MarkedDatesProperty, value);
         }
 
-        public ObservableCollection<MonthCell> VisibleViews
-        {
-            get => (ObservableCollection<MonthCell>) GetValue(VisibleViewsProperty);
-            private set => SetValue(MarkedDatesProperty, value);
-        }
-
-        public double TemplateViewHeight
-        {
-            get => (double) GetValue(TemplateViewHeightProperty);
-            set => SetValue(TemplateViewHeightProperty, value);
-        }
-
-        //private void VisibleViews_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        //{
-        //    VisibleViews.OrderBy(o => (_verticalDelta > 0) ? o.VisibleIndex : -o.VisibleIndex)
-        //            .ForEach((cell) =>
-        //            {
-        //                if (!_isScrolling && !cell.IsLoaded)
-        //                    cell.LoadCell();
-        //            });
-        //}
-
-        private void _collectionViewScrolledLoadDays(object sender, ItemsViewScrolledEventArgs e)
-        {
-            _verticalDelta = e.VerticalDelta;
-
-            if (Math.Abs(e.VerticalDelta) < 10
-                || e.LastVisibleItemIndex == _monthList.Count - 1
-                || e.FirstVisibleItemIndex == 0)
-            {
-                if (e.LastVisibleItemIndex == _monthList.Count - 1)
-                    Console.WriteLine("EndOfTheList");
-                else if (e.FirstVisibleItemIndex == 0)
-                    Console.WriteLine("StartOfTheList");
-                else
-                    Console.WriteLine("Middle");
-
-                _monthCellList //.OrderBy(o => (e.VerticalDelta > 0) ? o.VisibleIndex :- o.VisibleIndex)
-                    .ForEach(cell =>
-                    {
-                        var index = _monthList.FindIndex(a =>
-                        {
-                            if (!(cell.BindingContext is DateTime cellDate)) return false;
-                            return a == cellDate;
-                        });
-                        if (index >= e.FirstVisibleItemIndex && index <= e.LastVisibleItemIndex)
-                            if (!cell.IsLoaded)
-                                cell.LoadCell();
-                    });
-            }
-
-            if (Math.Abs(e.VerticalDelta) < 10)
-                _isScrolling = false;
-            else
-                _isScrolling = true;
-            Debug.WriteLine("HorizontalDelta: " + e.HorizontalDelta);
-            Debug.WriteLine("VerticalDelta: " + e.VerticalDelta);
-            Debug.WriteLine("HorizontalOffset: " + e.HorizontalOffset);
-            Debug.WriteLine("VerticalOffset: " + e.VerticalOffset);
-            Debug.WriteLine("FirstVisibleItemIndex: " + e.FirstVisibleItemIndex);
-            Debug.WriteLine("CenterItemIndex: " + e.CenterItemIndex);
-            Debug.WriteLine("LastVisibleItemIndex: " + e.LastVisibleItemIndex);
-        }
-
-        private static void CurrentDateChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void FirstDayChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is CalendarList calendarList)
             {
-                //var month = calendarList._monthList.Find(d => d.Value.Year == calendarList.CurrentDate.Year && d.Value.Month == calendarList.CurrentDate.Month);
-                //if (month != default)
-
-                //    calendarList._collectionView.ScrollTo(month);
+                calendarList._collectionView.ItemsSource = calendarList._monthList = calendarList.GetRangeMonths();
             }
         }
 
-        private List<DateTime> GetRangeMonths()
+        //private void _collectionViewScrolledLoadDays(object sender, ItemsViewScrolledEventArgs e)
+        //{
+        //    _verticalDelta = e.VerticalDelta;
+
+        //    if (Math.Abs(e.VerticalDelta) < 10
+        //        || e.LastVisibleItemIndex == _monthList.Count - 1
+        //        || e.FirstVisibleItemIndex == 0)
+        //    {
+        //        if (e.LastVisibleItemIndex == _monthList.Count - 1)
+        //            Console.WriteLine("EndOfTheList");
+        //        else if (e.FirstVisibleItemIndex == 0)
+        //            Console.WriteLine("StartOfTheList");
+        //        else
+        //            Console.WriteLine("Middle");
+
+        //        _monthCellList //.OrderBy(o => (e.VerticalDelta > 0) ? o.VisibleIndex :- o.VisibleIndex)
+        //            .ForEach(cell =>
+        //            {
+        //                var index = _monthList.FindIndex(a =>
+        //                {
+        //                    if (!(cell.BindingContext is DateTime cellDate)) return false;
+        //                    return a == cellDate;
+        //                });
+        //                if (index >= e.FirstVisibleItemIndex && index <= e.LastVisibleItemIndex)
+        //                    if (!cell.IsLoaded)
+        //                        cell.LoadCell();
+        //            });
+        //    }
+
+        //    if (Math.Abs(e.VerticalDelta) < 10)
+        //        _isScrolling = false;
+        //    else
+        //        _isScrolling = true;
+        //    Debug.WriteLine("HorizontalDelta: " + e.HorizontalDelta);
+        //    Debug.WriteLine("VerticalDelta: " + e.VerticalDelta);
+        //    Debug.WriteLine("HorizontalOffset: " + e.HorizontalOffset);
+        //    Debug.WriteLine("VerticalOffset: " + e.VerticalOffset);
+        //    Debug.WriteLine("FirstVisibleItemIndex: " + e.FirstVisibleItemIndex);
+        //    Debug.WriteLine("CenterItemIndex: " + e.CenterItemIndex);
+        //    Debug.WriteLine("LastVisibleItemIndex: " + e.LastVisibleItemIndex);
+        //}
+
+        private List<ListedDaysPerMonth> GetRangeMonths()
         {
             if (MaxDate != default && MinDate != default)
             {
+                //Month
                 var numberOfMonths = (MaxDate.Year - MinDate.Year) * 12 + MaxDate.Month - MinDate.Month + 1;
-
-                var list = new List<DateTime>();
+                var monthList = new List<ListedDaysPerMonth>();
                 Enumerable.Range(0, numberOfMonths).ForEach(d =>
                 {
-                    list.Add(MinDate.GetFirstDayOfMonth().AddMonths(d));
+                    monthList.Add(new ListedDaysPerMonth(MinDate.GetFirstDayOfMonth().AddMonths(d)));
                 });
-                return list;
+
+                //Populate days datetime in monthlist.
+                monthList.ForEach((m) =>
+                {
+                    var begin = m.Month.GetFirstDayOfMonth().GetFirstDayOfWeek(FirstDay);
+                    var end = m.Month.GetLastDayOfMonth().GetLastDayOfWeek(FirstDay);
+                    var numberOfDays = Convert.ToInt32((end - begin).TotalDays);
+                    
+                    Enumerable.Range(0, numberOfDays).ForEach(day => m.Add(begin.AddDays(day)));
+                });
+
+                return monthList;
             }
 
-            return new List<DateTime>();
+            return new List<ListedDaysPerMonth>();
         }
 
         public void PropagateClickedDate(object sender, SelectedItemChangedEventArgs e)
@@ -252,24 +254,5 @@ namespace Global.CalendarView.Controls
             ClickedDay?.Invoke(sender, e);
         }
 
-        ///// <summary>
-        /////     The marked dates property changed.
-        ///// </summary>
-        ///// <param name="bindable">The object.</param>
-        ///// <param name="oldValue">The old value.</param>
-        ///// <param name="newValue">The new value.</param>
-        //private static void MarkedDatesChanged(BindableObject bindable, object oldValue, object newValue)
-        //{
-        //    if (!(bindable is Month month)) return;
-
-        //    if (oldValue is CalendarDictionary<DateTime, object> oldDic)
-        //        oldDic.ClearCollectionChangedHandler();
-
-        //    if (newValue is CalendarDictionary<DateTime, object> newDic)
-        //    {
-        //        newDic.CollectionChanged += (sender, e) => month.MarkedDatesCollectionChanged(e);
-        //        month.UpdateAllMarkers();
-        //    }
-        //}
     }
 }
